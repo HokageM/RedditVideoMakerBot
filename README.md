@@ -49,6 +49,8 @@ On macOS and Linux (debian, arch, fedora and centos, and based on those), you ca
 
 This can also be used to update the installation
 
+Before running the script save desired mp4 background in 'resources/background_video.mp4' and desired mp3 background music in 'resources/background_audio.mp3'.
+
 4. Run `python main.py`
 5. Visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps), and set up an app that is a "script". Paste any URL in redirect URL. Ex:`https://jasoncameron.dev`
 6. The bot will ask you to fill in your details to connect to the Reddit API, and configure the bot to your liking

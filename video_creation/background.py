@@ -9,6 +9,10 @@ import yt_dlp
 from moviepy.editor import AudioFileClip, VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 
+import shutil
+
+from sympy.codegen.fnodes import dsign
+
 from utils import settings
 from utils.console import print_step, print_substep
 
@@ -85,14 +89,18 @@ def download_background_video(background_config: Tuple[str, str, str, Any]):
     )
     print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
-    ydl_opts = {
-        "format": "bestvideo[height<=1080][ext=mp4]",
-        "outtmpl": f"assets/backgrounds/video/{credit}-{filename}",
-        "retries": 10,
-    }
+    #ydl_opts = {
+    #    "format": "bestvideo[height<=1080][ext=mp4]",
+    #    "outtmpl": f"assets/backgrounds/video/{credit}-{filename}",
+    #    "retries": 10,
+    #}
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download(uri)
+    #with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    #    ydl.download(uri)
+    src = './resources/background_video.mp4'
+    dst = f"assets/backgrounds/video/{credit}-{filename}"
+    shutil.copy(src, dst)
+
     print_substep("Background video downloaded successfully! 🎉", style="bold green")
 
 
@@ -108,14 +116,18 @@ def download_background_audio(background_config: Tuple[str, str, str]):
     )
     print_substep("Downloading the backgrounds audio... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
-    ydl_opts = {
-        "outtmpl": f"./assets/backgrounds/audio/{credit}-{filename}",
-        "format": "bestaudio/best",
-        "extract_audio": True,
-    }
+    #ydl_opts = {
+    #    "outtmpl": f"./assets/backgrounds/audio/{credit}-{filename}",
+    #    "format": "bestaudio/best",
+    #    "extract_audio": True,
+    #}
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([uri])
+    #with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    #    ydl.download([uri])
+
+    src = './resources/background_audio.mp3'
+    dst = f"assets/backgrounds/audio/{credit}-{filename}"
+    shutil.copy(src, dst)
 
     print_substep("Background audio downloaded successfully! 🎉", style="bold green")
 

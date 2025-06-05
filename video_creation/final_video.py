@@ -93,9 +93,10 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
             an=None,
             **{
                 "c:v": "h264",
-                "b:v": "20M",
+                "b:v": "10M",
                 "b:a": "192k",
-                "threads": multiprocessing.cpu_count(),
+                "threads": 4,
+                "r": "30",
             },
         )
         .overwrite_output()
@@ -115,9 +116,9 @@ def create_fancy_thumbnail(image, text, text_color, padding, wrap=35):
     image_width, image_height = image.size
     lines = textwrap.wrap(text, width=wrap)
     y = (
-        (image_height / 2)
-        - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
-        + 30
+            (image_height / 2)
+            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+            + 30
     )
     draw = ImageDraw.Draw(image)
 
@@ -135,27 +136,27 @@ def create_fancy_thumbnail(image, text, text_color, padding, wrap=35):
         font_title_size = 40
         font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
         y = (
-            (image_height / 2)
-            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
-            + 35
+                (image_height / 2)
+                - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+                + 35
         )
     elif len(lines) == 4:
         lines = textwrap.wrap(text, width=wrap + 10)
         font_title_size = 35
         font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
         y = (
-            (image_height / 2)
-            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
-            + 40
+                (image_height / 2)
+                - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+                + 40
         )
     elif len(lines) > 4:
         lines = textwrap.wrap(text, width=wrap + 10)
         font_title_size = 30
         font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
         y = (
-            (image_height / 2)
-            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
-            + 30
+                (image_height / 2)
+                - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+                + 30
         )
 
     for line in lines:
@@ -186,10 +187,10 @@ def merge_background_audio(audio: ffmpeg, reddit_id: str):
 
 
 def make_final_video(
-    number_of_clips: int,
-    length: int,
-    reddit_obj: dict,
-    background_config: Dict[str, Tuple],
+        number_of_clips: int,
+        length: int,
+        reddit_obj: dict,
+        background_config: Dict[str, Tuple],
 ):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
     Args:
@@ -207,8 +208,8 @@ def make_final_video(
     reddit_id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
     allowOnlyTTSFolder: bool = (
-        settings.config["settings"]["background"]["enable_extra_audio"]
-        and settings.config["settings"]["background"]["background_audio_volume"] != 0
+            settings.config["settings"]["background"]["enable_extra_audio"]
+            and settings.config["settings"]["background"]["background_audio_volume"] != 0
     )
 
     print_step("Creating the final video 🎥")
@@ -305,7 +306,7 @@ def make_final_video(
             )
             background_clip = background_clip.overlay(
                 image_clips[0],
-                enable=f"between(t,{current_time},{current_time + audio_clips_durations[0]})",
+                enable=f"between(t,{current_time},{current_time + audio_clips_durations[0] + 0.2})",
                 x="(main_w-overlay_w)/2",
                 y="(main_h-overlay_h)/2",
             )
@@ -333,7 +334,7 @@ def make_final_video(
             )
             image_overlay = image_clips[i].filter("colorchannelmixer", aa=opacity)
             assert (
-                audio_clips_durations is not None
+                    audio_clips_durations is not None
             ), "Please make a GitHub issue if you see this. Ping @JasonLovesDoggo on GitHub."
             background_clip = background_clip.overlay(
                 image_overlay,
@@ -418,7 +419,7 @@ def make_final_video(
     with ProgressFfmpeg(length, on_update_example) as progress:
         path = defaultPath + f"/{filename}"
         path = (
-            path[:251] + ".mp4"
+                path[:251] + ".mp4"
         )  # Prevent a error by limiting the path length, do not change this.
         try:
             ffmpeg.output(
@@ -428,9 +429,10 @@ def make_final_video(
                 f="mp4",
                 **{
                     "c:v": "h264",
-                    "b:v": "20M",
+                    "b:v": "10M",
                     "b:a": "192k",
-                    "threads": multiprocessing.cpu_count(),
+                    "threads": 4,
+                    "r": "30",
                 },
             ).overwrite_output().global_args("-progress", progress.output_file.name).run(
                 quiet=True,
@@ -446,7 +448,7 @@ def make_final_video(
     if allowOnlyTTSFolder:
         path = defaultPath + f"/OnlyTTS/{filename}"
         path = (
-            path[:251] + ".mp4"
+                path[:251] + ".mp4"
         )  # Prevent a error by limiting the path length, do not change this.
         print_step("Rendering the Only TTS Video 🎥")
         with ProgressFfmpeg(length, on_update_example) as progress:
@@ -458,9 +460,10 @@ def make_final_video(
                     f="mp4",
                     **{
                         "c:v": "h264",
-                        "b:v": "20M",
+                        "b:v": "10M",
                         "b:a": "192k",
-                        "threads": multiprocessing.cpu_count(),
+                        "threads": 4,
+                        "r": "30",
                     },
                 ).overwrite_output().global_args("-progress", progress.output_file.name).run(
                     quiet=True,
